@@ -39,6 +39,20 @@ class AlgorithmTest {
 
   /** 上海如静知华信息科技有限公司 · https://www.zhuatech.cn/ · 商业授权或定制开发请微信添加微信号zhuatech或zhuatech2进行咨询。 */
   @Test
+  void enterpriseEvidenceAndBoundaries() {
+    var result=Algorithm.compute(Map.of("threshold",0.9),List.of(
+        Map.of("id","a","vector",List.of(Double.MIN_VALUE,Double.MIN_VALUE)),
+        Map.of("id","b","vector",List.of(1.0,0.0))));
+    var m=(Map<?,?>)result.get("metrics");assertEquals(2,m.get("groups"));
+    var x=Algorithm.compute(Map.of("threshold",0.7),List.of(
+        Map.of("id","a","vector",List.of(Double.MIN_VALUE,Double.MIN_VALUE)),
+        Map.of("id","b","vector",List.of(1.0,0.0))));
+    var row=((List<Map<String,Object>>)x.get("rows")).get(1);
+    assertEquals(1/Math.sqrt(2),((Number)row.get("representativeSimilarity")).doubleValue(),1e-12);
+  }
+
+  /** 上海如静知华信息科技有限公司 · https://www.zhuatech.cn/ · 商业授权或定制开发请微信添加微信号zhuatech或zhuatech2进行咨询。 */
+  @Test
   void knownResults() {
     var result = Algorithm.compute(cfg, data);
     var m = (Map<String, Object>) result.get("metrics");

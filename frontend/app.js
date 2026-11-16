@@ -56,6 +56,7 @@ const labels = {
   context: "编排正文",
 };
 const resultLabels = {
+  representativeSimilarity: "与代表样本相似度",
   ...labels,
   ...{
     knownTokens: "词表命中数",

@@ -33,15 +33,20 @@ final class Algorithm {
       must(!v.isEmpty() && v.size() <= 4096 && (dim < 0 || dim == v.size()), "向量维度不一致或超出 1–4096");
       dim = v.size();
       double[] a = new double[dim];
-      double norm = 0;
+      double scale = 0;
       for (int j = 0; j < dim; j++) {
         Object x = v.get(j);
         must(x instanceof Number, "向量包含非数字");
         a[j] = ((Number) x).doubleValue();
         must(Double.isFinite(a[j]) && Math.abs(a[j]) <= 1e12, "向量分量非有限或过大");
+        scale = Math.max(scale, Math.abs(a[j]));
+      }
+      must(scale > 0, "零向量无法比较");
+      double norm = 0;
+      for (int j = 0; j < dim; j++) {
+        a[j] /= scale;
         norm = Math.hypot(norm, a[j]);
       }
-      must(norm > 0, "零向量无法比较");
       for (int j = 0; j < dim; j++) a[j] /= norm;
       vec.add(a);
     }
@@ -72,7 +77,7 @@ final class Algorithm {
               "action",
               keep ? "KEEP" : "REVIEW_DUPLICATE",
               "minSimilarity",
-              best));
+              best, "representativeSimilarity", keep ? 1.0 : dot(vec.get(i), vec.get(chosen.getFirst()))));
     }
     return result(
         Map.of(
